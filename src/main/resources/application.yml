@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: auth
+          uri: http://192.168.0.55:9000
+          predicates:
+            - Path=/api/auth/**
+
+        - id: user
+          uri: http://192.168.0.55:9000
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - AuthenticationFilter
