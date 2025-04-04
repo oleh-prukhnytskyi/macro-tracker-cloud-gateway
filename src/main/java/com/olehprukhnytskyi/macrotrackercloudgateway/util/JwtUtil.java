@@ -1,10 +1,9 @@
 package com.olehprukhnytskyi.macrotrackercloudgateway.util;
 
 import io.jsonwebtoken.Jwts;
+import java.nio.charset.StandardCharsets;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.nio.charset.StandardCharsets;
 
 @Component
 public class JwtUtil {

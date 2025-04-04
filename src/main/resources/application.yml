@@ -1,4 +1,9 @@
+jwt:
+  secret: ${JWT_SECRET}
+
 spring:
+  application:
+    name: macro-tracker-cloud-gateway
   cloud:
     gateway:
       routes:
@@ -12,4 +17,4 @@ spring:
           predicates:
             - Path=/api/users/**
           filters:
-            - AuthenticationFilter
+            - AuthenticationFilterFactory
