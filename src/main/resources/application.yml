@@ -7,14 +7,35 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: auth
-          uri: http://192.168.0.55:9000
+        - id: auth-service
+          uri: http://192.168.0.206:9001
           predicates:
             - Path=/api/auth/**
 
-        - id: user
-          uri: http://192.168.0.55:9000
+        - id: user-service
+          uri: http://192.168.0.206:9001
           predicates:
             - Path=/api/users/**
+          filters:
+            - AuthenticationFilterFactory
+
+        - id: goal-service
+          uri: http://192.168.0.253:9002
+          predicates:
+            - Path=/api/goals/**
+          filters:
+            - AuthenticationFilterFactory
+
+        - id: food-service
+          uri: http://192.168.0.206:9003
+          predicates:
+            - Path=/api/foods/**
+          filters:
+            - AuthenticationFilterFactory
+
+        - id: intake-service
+          uri: http://192.168.0.253:9004
+          predicates:
+            - Path=/api/intake/**
           filters:
             - AuthenticationFilterFactory
