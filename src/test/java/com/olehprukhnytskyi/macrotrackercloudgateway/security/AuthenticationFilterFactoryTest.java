@@ -36,6 +36,9 @@ class AuthenticationFilterFactoryTest {
     private ServerHttpResponse response;
 
     @Mock
+    private ServerHttpRequest.Builder requestBuilder;
+
+    @Mock
     private GatewayFilterChain chain;
 
     private AuthenticationFilterFactory factory;
@@ -91,7 +94,20 @@ class AuthenticationFilterFactoryTest {
         when(exchange.getRequest()).thenReturn(request);
         when(request.getHeaders()).thenReturn(headers);
         when(headers.getFirst(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer validToken");
+
         when(jwtUtil.validateToken("validToken")).thenReturn(true);
+        when(jwtUtil.extractUserId("validToken")).thenReturn(123L);
+
+        ServerHttpRequest.Builder requestBuilder = mock(ServerHttpRequest.Builder.class);
+        when(request.mutate()).thenReturn(requestBuilder);
+        when(requestBuilder.header(eq("X-User-Id"), eq("123"))).thenReturn(requestBuilder);
+        when(requestBuilder.build()).thenReturn(request);
+
+        ServerWebExchange.Builder exchangeBuilder = mock(ServerWebExchange.Builder.class);
+        when(exchange.mutate()).thenReturn(exchangeBuilder);
+        when(exchangeBuilder.request(request)).thenReturn(exchangeBuilder);
+        when(exchangeBuilder.build()).thenReturn(exchange);
+
         when(chain.filter(exchange)).thenReturn(Mono.empty());
 
         GatewayFilter filter = factory.apply(new AuthenticationFilterFactory.Config());
