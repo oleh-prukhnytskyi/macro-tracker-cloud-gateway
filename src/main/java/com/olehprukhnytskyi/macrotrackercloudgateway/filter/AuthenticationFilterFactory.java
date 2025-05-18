@@ -1,5 +1,6 @@
-package com.olehprukhnytskyi.macrotrackercloudgateway.security;
+package com.olehprukhnytskyi.macrotrackercloudgateway.filter;
 
+import com.olehprukhnytskyi.macrotrackercloudgateway.util.CustomHeaders;
 import com.olehprukhnytskyi.macrotrackercloudgateway.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -34,7 +35,7 @@ public class AuthenticationFilterFactory implements
 
             Long userId = jwtUtil.extractUserId(token);
             ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
-                    .header("X-User-Id", userId.toString())
+                    .header(CustomHeaders.X_USER_ID, userId.toString())
                     .build();
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
         };

@@ -1,7 +1,16 @@
-package com.olehprukhnytskyi.macrotrackercloudgateway.security;
+package com.olehprukhnytskyi.macrotrackercloudgateway.filter;
 
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import com.olehprukhnytskyi.macrotrackercloudgateway.util.CustomHeaders;
 import com.olehprukhnytskyi.macrotrackercloudgateway.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -15,8 +24,6 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AuthenticationFilterFactoryTest {
@@ -49,7 +56,9 @@ class AuthenticationFilterFactoryTest {
     }
 
     @Test
-    void apply_withMissingAuthorizationHeader_unauthorized() {
+    @DisplayName("When authorization header is missing, should return Unauthorized")
+    void apply_whenMissingAuthorizationHeader_shouldReturnUnauthorized() {
+        // Given
         when(exchange.getRequest()).thenReturn(request);
         when(request.getHeaders()).thenReturn(headers);
         when(headers.getFirst(HttpHeaders.AUTHORIZATION)).thenReturn(null);
@@ -57,19 +66,22 @@ class AuthenticationFilterFactoryTest {
         when(response.setStatusCode(HttpStatus.UNAUTHORIZED)).thenReturn(true);
         when(response.setComplete()).thenReturn(Mono.empty());
 
+        // When
         GatewayFilter filter = factory.apply(new AuthenticationFilterFactory.Config());
-
         StepVerifier.create(filter.filter(exchange, chain))
                 .expectComplete()
                 .verify();
 
+        // Then
         verify(response).setStatusCode(HttpStatus.UNAUTHORIZED);
         verify(response).setComplete();
         verifyNoInteractions(jwtUtil, chain);
     }
 
     @Test
-    void apply_withInvalidToken_unauthorized() {
+    @DisplayName("When token is invalid, should return Unauthorized")
+    void apply_whenInvalidToken_shouldReturnUnauthorized() {
+        // Given
         when(exchange.getRequest()).thenReturn(request);
         when(request.getHeaders()).thenReturn(headers);
         when(headers.getFirst(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer invalidToken");
@@ -78,44 +90,46 @@ class AuthenticationFilterFactoryTest {
         when(response.setStatusCode(HttpStatus.UNAUTHORIZED)).thenReturn(true);
         when(response.setComplete()).thenReturn(Mono.empty());
 
+        // When
         GatewayFilter filter = factory.apply(new AuthenticationFilterFactory.Config());
-
         StepVerifier.create(filter.filter(exchange, chain))
                 .expectComplete()
                 .verify();
 
+        // Then
         verify(response).setStatusCode(HttpStatus.UNAUTHORIZED);
         verify(response).setComplete();
         verifyNoMoreInteractions(chain);
     }
 
     @Test
-    void apply_withValidToken_ok() {
+    @DisplayName("When token is valid, should return OK")
+    void apply_whenValidToken_shouldReturnOk() {
+        // Given
+        ServerHttpRequest.Builder requestBuilder = mock(ServerHttpRequest.Builder.class);
+        ServerWebExchange.Builder exchangeBuilder = mock(ServerWebExchange.Builder.class);
+
         when(exchange.getRequest()).thenReturn(request);
         when(request.getHeaders()).thenReturn(headers);
         when(headers.getFirst(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer validToken");
-
         when(jwtUtil.validateToken("validToken")).thenReturn(true);
         when(jwtUtil.extractUserId("validToken")).thenReturn(123L);
-
-        ServerHttpRequest.Builder requestBuilder = mock(ServerHttpRequest.Builder.class);
         when(request.mutate()).thenReturn(requestBuilder);
-        when(requestBuilder.header(eq("X-User-Id"), eq("123"))).thenReturn(requestBuilder);
+        when(requestBuilder.header(eq(CustomHeaders.X_USER_ID), eq("123")))
+                .thenReturn(requestBuilder);
         when(requestBuilder.build()).thenReturn(request);
-
-        ServerWebExchange.Builder exchangeBuilder = mock(ServerWebExchange.Builder.class);
         when(exchange.mutate()).thenReturn(exchangeBuilder);
         when(exchangeBuilder.request(request)).thenReturn(exchangeBuilder);
         when(exchangeBuilder.build()).thenReturn(exchange);
-
         when(chain.filter(exchange)).thenReturn(Mono.empty());
 
+        // When
         GatewayFilter filter = factory.apply(new AuthenticationFilterFactory.Config());
-
         StepVerifier.create(filter.filter(exchange, chain))
                 .expectComplete()
                 .verify();
 
+        // Then
         verify(chain).filter(exchange);
         verifyNoInteractions(response);
     }

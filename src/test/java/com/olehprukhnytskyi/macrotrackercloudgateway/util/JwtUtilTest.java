@@ -1,17 +1,17 @@
 package com.olehprukhnytskyi.macrotrackercloudgateway.util;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import javax.crypto.spec.SecretKeySpec;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.*;
+import javax.crypto.spec.SecretKeySpec;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class JwtUtilTest {
     private JwtUtil jwtUtil;
@@ -20,8 +20,8 @@ class JwtUtilTest {
     @BeforeEach
     void setUp() {
         jwtUtil = new JwtUtil();
-        String secret = "test_secret_key_test_secret_key_test_secret_key_test_secret_" +
-                "key_test_secret_key_test_secret_key_test_secret_key_test_secret_key";
+        String secret = "test_secret_key_test_secret_key_test_secret_key_test_secret_"
+                + "key_test_secret_key_test_secret_key_test_secret_key_test_secret_key";
         key = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8),
                 SignatureAlgorithm.HS256.getJcaName());
 
