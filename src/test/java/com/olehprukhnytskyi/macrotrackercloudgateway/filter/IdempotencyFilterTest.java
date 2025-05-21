@@ -92,7 +92,7 @@ class IdempotencyFilterTest {
 
         MockServerHttpRequest request = MockServerHttpRequest.post(path)
                 .header(CustomHeaders.X_USER_ID, userId)
-                .build();
+                .body("");
         MockServerWebExchange exchange = MockServerWebExchange.from(request);
 
         // When
@@ -134,7 +134,7 @@ class IdempotencyFilterTest {
         verify(chain).filter(captor.capture());
 
         ServerHttpRequest mutatedRequest = captor.getValue().getRequest();
-        String expectedHash = DigestUtils.sha256Hex("null" + "|" + path + "|" + body);
+        String expectedHash = DigestUtils.sha256Hex("|" + path + "|" + body);
         assertEquals(expectedHash, mutatedRequest.getHeaders()
                 .getFirst(CustomHeaders.X_REQUEST_ID));
     }
