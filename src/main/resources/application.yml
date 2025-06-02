@@ -39,3 +39,10 @@ spring:
             - Path=/api/intake/**
           filters:
             - AuthenticationFilterFactory
+
+        - id: bff-service
+          uri: http://192.168.0.206:9005
+          predicates:
+            - Path=/api/dashboard/**
+          filters:
+            - AuthenticationFilterFactory
