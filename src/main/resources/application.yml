@@ -46,3 +46,10 @@ spring:
             - Path=/api/dashboard/**
           filters:
             - AuthenticationFilterFactory
+
+        - id: import-export-service
+          uri: http://192.168.0.206:9006
+          predicates:
+            - Path=/api/imports/**, /api/exports/**
+          filters:
+            - AuthenticationFilterFactory
