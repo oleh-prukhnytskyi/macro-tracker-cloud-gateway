@@ -1,13 +1,12 @@
 package com.olehprukhnytskyi.macrotrackercloudgateway.filter;
 
-import static org.mockito.Mockito.eq;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import com.olehprukhnytskyi.macrotrackercloudgateway.util.CustomHeaders;
 import com.olehprukhnytskyi.macrotrackercloudgateway.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -115,7 +114,7 @@ class AuthenticationFilterFactoryTest {
         when(jwtUtil.validateToken("validToken")).thenReturn(true);
         when(jwtUtil.extractUserId("validToken")).thenReturn(123L);
         when(request.mutate()).thenReturn(requestBuilder);
-        when(requestBuilder.header(eq(CustomHeaders.X_USER_ID), eq("123")))
+        when(requestBuilder.header(anyString(), anyString()))
                 .thenReturn(requestBuilder);
         when(requestBuilder.build()).thenReturn(request);
         when(exchange.mutate()).thenReturn(exchangeBuilder);

@@ -36,6 +36,7 @@ public class AuthenticationFilterFactory implements
             Long userId = jwtUtil.extractUserId(token);
             ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
                     .header(CustomHeaders.X_USER_ID, userId.toString())
+                    .header(HttpHeaders.AUTHORIZATION, authHeader)
                     .build();
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
         };
