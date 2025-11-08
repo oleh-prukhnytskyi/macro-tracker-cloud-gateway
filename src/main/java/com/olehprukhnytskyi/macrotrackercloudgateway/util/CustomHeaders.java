@@ -3,4 +3,5 @@ package com.olehprukhnytskyi.macrotrackercloudgateway.util;
 public class CustomHeaders {
     public static final String X_USER_ID = "X-User-Id";
     public static final String X_REQUEST_ID = "X-Request-Id";
+    public static final String X_TRACE_ID = "X-Trace-Id";
 }
