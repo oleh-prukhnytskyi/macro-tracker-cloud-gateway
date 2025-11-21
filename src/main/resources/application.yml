@@ -8,48 +8,41 @@ spring:
     gateway:
       routes:
         - id: user-service-auth
-          uri: http://192.168.0.206:9001
+          uri: ${FEIGN_USER_SERVICE}
           predicates:
             - Path=/api/auth/**
 
         - id: user-service
-          uri: http://192.168.0.206:9001
+          uri: ${FEIGN_USER_SERVICE}
           predicates:
             - Path=/api/users/**, /api/profile/**
           filters:
             - AuthenticationFilterFactory
 
         - id: goal-service
-          uri: http://192.168.0.253:9002
+          uri: ${FEIGN_GOAL_SERVICE}
           predicates:
             - Path=/api/goals/**
           filters:
             - AuthenticationFilterFactory
 
         - id: food-service
-          uri: http://192.168.0.206:9003
+          uri: ${FEIGN_FOOD_SERVICE}
           predicates:
             - Path=/api/foods/**
           filters:
             - AuthenticationFilterFactory
 
         - id: intake-service
-          uri: http://192.168.0.253:9004
+          uri: ${FEIGN_INTAKE_SERVICE}
           predicates:
             - Path=/api/intake/**
           filters:
             - AuthenticationFilterFactory
 
         - id: bff-service
-          uri: http://192.168.0.206:9005
+          uri: ${FEIGN_BFF_SERVICE}
           predicates:
             - Path=/api/dashboard/**
-          filters:
-            - AuthenticationFilterFactory
-
-        - id: import-export-service
-          uri: http://192.168.0.206:9006
-          predicates:
-            - Path=/api/imports/**, /api/exports/**
           filters:
             - AuthenticationFilterFactory
