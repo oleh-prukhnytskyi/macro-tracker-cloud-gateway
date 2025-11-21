@@ -5,6 +5,6 @@ RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-COPY --from=build /target/*.jar macro-tracker-cloud-gateway.jar
+COPY --from=build /app/target/*.jar macro-tracker-cloud-gateway.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "macro-tracker-cloud-gateway.jar"]
