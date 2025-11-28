@@ -1,6 +1,15 @@
 jwt:
   secret: ${JWT_SECRET}
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
 spring:
   application:
     name: macro-tracker-cloud-gateway
@@ -46,3 +55,7 @@ spring:
             - Path=/api/dashboard/**
           filters:
             - AuthenticationFilterFactory
+    discovery:
+      client:
+        health-indicator:
+          enabled: false
