@@ -28,24 +28,20 @@ import reactor.test.StepVerifier;
 class AuthenticationFilterFactoryTest {
     @Mock
     private JwtUtil jwtUtil;
-
     @Mock
     private ServerWebExchange exchange;
-
     @Mock
     private ServerHttpRequest request;
-
     @Mock
     private HttpHeaders headers;
-
     @Mock
     private ServerHttpResponse response;
-
     @Mock
     private ServerHttpRequest.Builder requestBuilder;
-
     @Mock
     private GatewayFilterChain chain;
+    @Mock
+    private HttpHeaders responseHeaders;
 
     private AuthenticationFilterFactory factory;
 
@@ -62,6 +58,7 @@ class AuthenticationFilterFactoryTest {
         when(request.getHeaders()).thenReturn(headers);
         when(headers.getFirst(HttpHeaders.AUTHORIZATION)).thenReturn(null);
         when(exchange.getResponse()).thenReturn(response);
+        when(response.getHeaders()).thenReturn(responseHeaders);
         when(response.setStatusCode(HttpStatus.UNAUTHORIZED)).thenReturn(true);
         when(response.setComplete()).thenReturn(Mono.empty());
 
@@ -86,6 +83,7 @@ class AuthenticationFilterFactoryTest {
         when(headers.getFirst(HttpHeaders.AUTHORIZATION)).thenReturn("Bearer invalidToken");
         when(jwtUtil.validateToken("invalidToken")).thenReturn(false);
         when(exchange.getResponse()).thenReturn(response);
+        when(response.getHeaders()).thenReturn(responseHeaders);
         when(response.setStatusCode(HttpStatus.UNAUTHORIZED)).thenReturn(true);
         when(response.setComplete()).thenReturn(Mono.empty());
 

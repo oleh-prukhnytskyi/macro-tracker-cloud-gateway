@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -24,18 +25,20 @@ public class AuthenticationFilterFactory implements
     @Override
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
-            if (exchange.getRequest().getMethod() == HttpMethod.OPTIONS) {
+            ServerHttpRequest request = exchange.getRequest();
+
+            if (request.getMethod() == HttpMethod.OPTIONS) {
                 return chain.filter(exchange);
             }
 
-            String authHeader = exchange.getRequest()
-                    .getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+            String authHeader = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                return onError(exchange, "Missing or invalid Authorization Header");
+                return onError(exchange, "Missing or invalid Authorization Header",
+                        HttpStatus.UNAUTHORIZED);
             }
             String token = authHeader.substring(7);
             if (!jwtUtil.validateToken(token)) {
-                return onError(exchange, "Invalid Token");
+                return onError(exchange, "Invalid Token", HttpStatus.UNAUTHORIZED);
             }
 
             Long userId = jwtUtil.extractUserId(token);
@@ -47,9 +50,19 @@ public class AuthenticationFilterFactory implements
         };
     }
 
-    private Mono<Void> onError(ServerWebExchange exchange, String errorMessage) {
-        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-        return exchange.getResponse().setComplete();
+    private Mono<Void> onError(ServerWebExchange exchange, String errorMessage,
+                               HttpStatus status) {
+        ServerHttpResponse response = exchange.getResponse();
+        response.setStatusCode(status);
+        response.getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+        response.getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
+                "GET, POST, PUT, DELETE, OPTIONS");
+        response.getHeaders().add(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS,
+                "Content-Type, Authorization");
+        if (status == HttpStatus.UNAUTHORIZED) {
+            response.getHeaders().add(HttpHeaders.WWW_AUTHENTICATE, "Bearer");
+        }
+        return response.setComplete();
     }
 
     @Override
