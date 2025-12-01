@@ -15,6 +15,24 @@ spring:
     name: macro-tracker-cloud-gateway
   cloud:
     gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - ${USER_SERVICE_URL}
+              - ${INTAKE_SERVICE_URL}
+              - ${GOAL_SERVICE_URL}
+              - ${FOOD_SERVICE_URL}
+              - ${BFF_SERVICE_URL}
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
       routes:
         - id: user-service-auth
           uri: ${USER_SERVICE_URL}
