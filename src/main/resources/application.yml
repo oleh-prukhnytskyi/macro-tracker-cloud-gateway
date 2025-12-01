@@ -22,10 +22,14 @@ spring:
         add-to-simple-url-handler-mapping: true
         cors-configurations:
           '[/**]':
-            allowedOrigins: "*"
-            allowedMethods: "*"
-            allowedHeaders: "*"
-            allowCredentials: true
+            allowed-origin-patterns:
+              - "https://*.macrotracker.uk"
+              - "http://*.macrotracker.uk"
+              - "http://localhost:*"
+              - "http://127.0.0.1:*"
+            allowed-methods: "*"
+            allowed-headers: "*"
+            allow-credentials: true
       routes:
         - id: user-service-auth
           uri: ${USER_SERVICE_URL}
