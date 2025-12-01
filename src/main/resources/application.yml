@@ -20,18 +20,8 @@ spring:
         cors-configurations:
           '[/**]':
             allowedOrigins:
-              - ${CLOUD_GATEWAY_URL}
-              - ${USER_SERVICE_URL}
-              - ${INTAKE_SERVICE_URL}
-              - ${GOAL_SERVICE_URL}
-              - ${FOOD_SERVICE_URL}
-              - ${BFF_SERVICE_URL}
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
+              - ${MACRO_TRACKER_URL}
+            allowedMethods: "*"
             allowedHeaders: "*"
             allowCredentials: true
       routes:
