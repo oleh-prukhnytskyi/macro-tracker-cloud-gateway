@@ -125,15 +125,15 @@ springdoc:
     path: /swagger-ui
     urls:
       - name: user-service
-        url: ${CLOUD_GATEWAY_URL}/api-docs/user-service
+        url: /api-docs/user-service
       - name: intake-service
-        url: ${CLOUD_GATEWAY_URL}/api-docs/intake-service
+        url: /api-docs/intake-service
       - name: bff-service
-        url: ${CLOUD_GATEWAY_URL}/api-docs/bff-service
+        url: /api-docs/bff-service
       - name: food-service
-        url: ${CLOUD_GATEWAY_URL}/api-docs/food-service
+        url: /api-docs/food-service
       - name: goal-service
-        url: ${CLOUD_GATEWAY_URL}/api-docs/goal-service
+        url: /api-docs/goal-service
     use-root-path: true
     disable-swagger-default-url: true
     deep-linking: true
