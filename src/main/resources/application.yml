@@ -14,6 +14,11 @@ server:
   forward-headers-strategy: native
 
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${USER_SERVICE_URL}/.well-known/jwks.json
   application:
     name: macro-tracker-cloud-gateway
   cloud:
@@ -33,17 +38,10 @@ spring:
               - "Content-Disposition"
             max-age: 3600
       routes:
-        - id: user-service-auth
-          uri: ${USER_SERVICE_URL}
-          predicates:
-            - Path=/api/auth/**
-
         - id: user-service
           uri: ${USER_SERVICE_URL}
           predicates:
-            - Path=/api/users/**, /api/profile/**
-          filters:
-            - AuthenticationFilterFactory
+            - Path=/api/auth/**, /api/users/**, /api/profile/**
 
         - id: user-service-swagger
           uri: ${USER_SERVICE_URL}
@@ -56,8 +54,6 @@ spring:
           uri: ${GOAL_SERVICE_URL}
           predicates:
             - Path=/api/goals/**
-          filters:
-            - AuthenticationFilterFactory
 
         - id: goal-service-swagger
           uri: ${GOAL_SERVICE_URL}
@@ -70,8 +66,6 @@ spring:
           uri: ${FOOD_SERVICE_URL}
           predicates:
             - Path=/api/foods/**
-          filters:
-            - AuthenticationFilterFactory
 
         - id: food-service-swagger
           uri: ${FOOD_SERVICE_URL}
@@ -84,8 +78,6 @@ spring:
           uri: ${INTAKE_SERVICE_URL}
           predicates:
             - Path=/api/intake/**
-          filters:
-            - AuthenticationFilterFactory
 
         - id: intake-service-swagger
           uri: ${INTAKE_SERVICE_URL}
@@ -98,8 +90,6 @@ spring:
           uri: ${BFF_SERVICE_URL}
           predicates:
             - Path=/api/dashboard/**
-          filters:
-            - AuthenticationFilterFactory
 
         - id: bff-service-swagger
           uri: ${BFF_SERVICE_URL}

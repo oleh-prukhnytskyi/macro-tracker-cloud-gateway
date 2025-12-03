@@ -1,3 +1,6 @@
-jwt:
-  secret: test_secret_key_test_secret_key_test_secret_key_test_secret_
-    key_test_secret_key_test_secret_key_test_secret_key_test_secret_key
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: service/.well-known/jwks.json
