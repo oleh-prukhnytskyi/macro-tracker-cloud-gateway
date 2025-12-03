@@ -26,7 +26,9 @@ public class SecurityConfig {
                                 "/api/auth/**",
                                 "/api-docs/**",
                                 "/.well-known/jwks.json",
-                                "/swagger-ui/**"
+                                "/swagger-ui/**",
+                                "/webjars/**",
+                                "/actuator/**"
                         ).permitAll()
                         .anyExchange().authenticated()
                 )
