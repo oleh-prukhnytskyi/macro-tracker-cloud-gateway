@@ -1,19 +1,7 @@
-jwt:
-  secret: ${JWT_SECRET}
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: "*"
-  endpoint:
-    health:
-      show-details: always
-
-server:
-  forward-headers-strategy: native
-
 spring:
+  data:
+    redis:
+      url: ${CLOUD_GATEWAY_REDIS_URL}
   security:
     oauth2:
       resourceserver:
@@ -38,10 +26,30 @@ spring:
               - "Content-Disposition"
             max-age: 3600
       routes:
+        # ======================= USER SERVICE ========================
+        - id: auth-endpoints-rate-limit
+          uri: ${USER_SERVICE_URL}
+          predicates:
+            - Path=/api/auth/login, /api/auth/register, /api/auth/social, /api/auth/refresh
+          filters:
+            - name: RequestRateLimiter
+              args:
+                keyResolver: "#{@hybridKeyResolver}"
+                replenishRate: 2
+                burstCapacity: 5
+                requestedTokens: 1
+
         - id: user-service
           uri: ${USER_SERVICE_URL}
           predicates:
             - Path=/api/auth/**, /api/users/**, /api/profile/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                keyResolver: "#{@hybridKeyResolver}"
+                replenishRate: 20
+                burstCapacity: 40
+                requestedTokens: 1
 
         - id: user-service-swagger
           uri: ${USER_SERVICE_URL}
@@ -50,10 +58,18 @@ spring:
           filters:
             - RewritePath=/api-docs/user-service, /api-docs
 
+        # ======================= GOAL SERVICE ========================
         - id: goal-service
           uri: ${GOAL_SERVICE_URL}
           predicates:
             - Path=/api/goals/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                keyResolver: "#{@hybridKeyResolver}"
+                replenishRate: 15
+                burstCapacity: 30
+                requestedTokens: 1
 
         - id: goal-service-swagger
           uri: ${GOAL_SERVICE_URL}
@@ -62,10 +78,18 @@ spring:
           filters:
             - RewritePath=/api-docs/goal-service, /api-docs
 
+        # ======================= FOOD SERVICE ========================
         - id: food-service
           uri: ${FOOD_SERVICE_URL}
           predicates:
             - Path=/api/foods/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                keyResolver: "#{@hybridKeyResolver}"
+                replenishRate: 15
+                burstCapacity: 30
+                requestedTokens: 1
 
         - id: food-service-swagger
           uri: ${FOOD_SERVICE_URL}
@@ -74,10 +98,18 @@ spring:
           filters:
             - RewritePath=/api-docs/food-service, /api-docs
 
+        # ====================== INTAKE SERVICE =======================
         - id: intake-service
           uri: ${INTAKE_SERVICE_URL}
           predicates:
             - Path=/api/intake/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                keyResolver: "#{@hybridKeyResolver}"
+                replenishRate: 15
+                burstCapacity: 30
+                requestedTokens: 1
 
         - id: intake-service-swagger
           uri: ${INTAKE_SERVICE_URL}
@@ -86,10 +118,18 @@ spring:
           filters:
             - RewritePath=/api-docs/intake-service, /api-docs
 
+        # ======================== BFF SERVICE ========================
         - id: bff-service
           uri: ${BFF_SERVICE_URL}
           predicates:
             - Path=/api/dashboard/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                keyResolver: "#{@hybridKeyResolver}"
+                replenishRate: 10
+                burstCapacity: 20
+                requestedTokens: 1
 
         - id: bff-service-swagger
           uri: ${BFF_SERVICE_URL}
@@ -119,3 +159,15 @@ springdoc:
       - name: goal-service
         url: /api-docs/goal-service
     persist-authorization: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+server:
+  forward-headers-strategy: native
