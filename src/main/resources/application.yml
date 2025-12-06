@@ -11,8 +11,6 @@ spring:
     name: macro-tracker-cloud-gateway
   cloud:
     gateway:
-      default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials
       globalcors:
         add-to-simple-url-handler-mapping: true
         cors-configurations:
@@ -27,17 +25,17 @@ spring:
             max-age: 3600
       routes:
         # ======================= USER SERVICE ========================
-        - id: auth-endpoints-rate-limit
+        - id: user-service-auth-critical
           uri: ${USER_SERVICE_URL}
           predicates:
-            - Path=/api/auth/login, /api/auth/register, /api/auth/social, /api/auth/refresh
+            - Path=/api/auth/login, /api/auth/register, /api/auth/social
           filters:
             - name: RequestRateLimiter
               args:
-                keyResolver: "#{@hybridKeyResolver}"
-                replenishRate: 2
-                burstCapacity: 5
-                requestedTokens: 1
+                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
+                redis-rate-limiter.replenishRate: 3
+                redis-rate-limiter.burstCapacity: 5
+                redis-rate-limiter.requestedTokens: 1
 
         - id: user-service
           uri: ${USER_SERVICE_URL}
@@ -46,10 +44,10 @@ spring:
           filters:
             - name: RequestRateLimiter
               args:
-                keyResolver: "#{@hybridKeyResolver}"
-                replenishRate: 20
-                burstCapacity: 40
-                requestedTokens: 1
+                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
+                redis-rate-limiter.replenishRate: 20
+                redis-rate-limiter.burstCapacity: 30
+                redis-rate-limiter.requestedTokens: 1
 
         - id: user-service-swagger
           uri: ${USER_SERVICE_URL}
@@ -57,6 +55,12 @@ spring:
             - Path=/api-docs/user-service/**
           filters:
             - RewritePath=/api-docs/user-service, /api-docs
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 75
+                redis-rate-limiter.requestedTokens: 1
 
         # ======================= GOAL SERVICE ========================
         - id: goal-service
@@ -66,10 +70,10 @@ spring:
           filters:
             - name: RequestRateLimiter
               args:
-                keyResolver: "#{@hybridKeyResolver}"
-                replenishRate: 15
-                burstCapacity: 30
-                requestedTokens: 1
+                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
+                redis-rate-limiter.replenishRate: 20
+                redis-rate-limiter.burstCapacity: 30
+                redis-rate-limiter.requestedTokens: 1
 
         - id: goal-service-swagger
           uri: ${GOAL_SERVICE_URL}
@@ -77,6 +81,12 @@ spring:
             - Path=/api-docs/goal-service/**
           filters:
             - RewritePath=/api-docs/goal-service, /api-docs
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 75
+                redis-rate-limiter.requestedTokens: 1
 
         # ======================= FOOD SERVICE ========================
         - id: food-service
@@ -86,10 +96,10 @@ spring:
           filters:
             - name: RequestRateLimiter
               args:
-                keyResolver: "#{@hybridKeyResolver}"
-                replenishRate: 15
-                burstCapacity: 30
-                requestedTokens: 1
+                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
+                redis-rate-limiter.replenishRate: 20
+                redis-rate-limiter.burstCapacity: 30
+                redis-rate-limiter.requestedTokens: 1
 
         - id: food-service-swagger
           uri: ${FOOD_SERVICE_URL}
@@ -97,6 +107,12 @@ spring:
             - Path=/api-docs/food-service/**
           filters:
             - RewritePath=/api-docs/food-service, /api-docs
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 75
+                redis-rate-limiter.requestedTokens: 1
 
         # ====================== INTAKE SERVICE =======================
         - id: intake-service
@@ -106,10 +122,10 @@ spring:
           filters:
             - name: RequestRateLimiter
               args:
-                keyResolver: "#{@hybridKeyResolver}"
-                replenishRate: 15
-                burstCapacity: 30
-                requestedTokens: 1
+                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
+                redis-rate-limiter.replenishRate: 20
+                redis-rate-limiter.burstCapacity: 30
+                redis-rate-limiter.requestedTokens: 1
 
         - id: intake-service-swagger
           uri: ${INTAKE_SERVICE_URL}
@@ -117,6 +133,12 @@ spring:
             - Path=/api-docs/intake-service/**
           filters:
             - RewritePath=/api-docs/intake-service, /api-docs
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 75
+                redis-rate-limiter.requestedTokens: 1
 
         # ======================== BFF SERVICE ========================
         - id: bff-service
@@ -126,10 +148,10 @@ spring:
           filters:
             - name: RequestRateLimiter
               args:
-                keyResolver: "#{@hybridKeyResolver}"
-                replenishRate: 10
-                burstCapacity: 20
-                requestedTokens: 1
+                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
+                redis-rate-limiter.replenishRate: 20
+                redis-rate-limiter.burstCapacity: 30
+                redis-rate-limiter.requestedTokens: 1
 
         - id: bff-service-swagger
           uri: ${BFF_SERVICE_URL}
@@ -137,6 +159,12 @@ spring:
             - Path=/api-docs/bff-service/**
           filters:
             - RewritePath=/api-docs/bff-service, /api-docs
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 75
+                redis-rate-limiter.requestedTokens: 1
     discovery:
       client:
         health-indicator:
