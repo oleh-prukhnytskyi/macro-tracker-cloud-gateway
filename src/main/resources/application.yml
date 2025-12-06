@@ -24,6 +24,21 @@ spring:
               - "Content-Disposition"
             max-age: 3600
       routes:
+        # ========================= SWAGGER ===========================
+        - id: swagger-ui-static
+          uri: ${CLOUD_GATEWAY_URL}
+          predicates:
+            - Path=/swagger-ui/**, /api-docs/**, /webjars/**
+            - Header=X-GATEWAY-LOOP, false
+          filters:
+            - AddRequestHeader=X-GATEWAY-LOOP, true
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 75
+                redis-rate-limiter.requestedTokens: 1
+
         # ======================= USER SERVICE ========================
         - id: user-service-auth-critical
           uri: ${USER_SERVICE_URL}
