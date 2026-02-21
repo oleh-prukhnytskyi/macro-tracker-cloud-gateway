@@ -133,7 +133,7 @@ spring:
         - id: intake-service
           uri: ${INTAKE_SERVICE_URL}
           predicates:
-            - Path=/api/intake/**, /api/meals/**
+            - Path=/api/intake/**, /api/meal-templates/**
           filters:
             - name: RequestRateLimiter
               args:
