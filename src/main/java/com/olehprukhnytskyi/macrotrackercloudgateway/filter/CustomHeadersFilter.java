@@ -1,6 +1,7 @@
 package com.olehprukhnytskyi.macrotrackercloudgateway.filter;
 
 import com.olehprukhnytskyi.macrotrackercloudgateway.util.CustomHeaders;
+import java.util.List;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -22,8 +23,11 @@ public class CustomHeadersFilter implements GlobalFilter, Ordered {
                 .map(auth -> (Jwt) auth.getPrincipal())
                 .map(jwt -> {
                     String userId = jwt.getClaimAsString("id");
+                    List<String> roles = jwt.getClaimAsStringList("roles");
+                    String rolesStr = roles != null ? String.join(",", roles) : "";
                     ServerHttpRequest request = exchange.getRequest().mutate()
                             .header(CustomHeaders.X_USER_ID, userId)
+                            .header(CustomHeaders.X_USER_ROLES, rolesStr)
                             .build();
                     return exchange.mutate().request(request).build();
                 })
