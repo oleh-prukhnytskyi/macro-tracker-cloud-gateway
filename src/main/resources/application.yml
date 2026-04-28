@@ -155,6 +155,32 @@ spring:
                 redis-rate-limiter.burstCapacity: 75
                 redis-rate-limiter.requestedTokens: 1
 
+        # ====================== WEIGHT SERVICE =======================
+        - id: weight-service
+          uri: ${WEIGHT_SERVICE_URL}
+          predicates:
+            - Path=/api/weights/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
+                redis-rate-limiter.replenishRate: 20
+                redis-rate-limiter.burstCapacity: 30
+                redis-rate-limiter.requestedTokens: 1
+
+        - id: weight-service-swagger
+          uri: ${WEIGHT_SERVICE_URL}
+          predicates:
+            - Path=/api-docs/weight-service/**
+          filters:
+            - RewritePath=/api-docs/weight-service, /api-docs
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
+                redis-rate-limiter.replenishRate: 50
+                redis-rate-limiter.burstCapacity: 75
+                redis-rate-limiter.requestedTokens: 1
+
         # ======================== BFF SERVICE ========================
         - id: bff-service
           uri: ${BFF_SERVICE_URL}
@@ -195,6 +221,8 @@ springdoc:
         url: /api-docs/user-service
       - name: intake-service
         url: /api-docs/intake-service
+      - name: weight-service
+        url: /api-docs/weight-service
       - name: bff-service
         url: /api-docs/bff-service
       - name: food-service
