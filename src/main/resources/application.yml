@@ -55,7 +55,7 @@ spring:
         - id: user-service
           uri: ${USER_SERVICE_URL}
           predicates:
-            - Path=/api/auth/**, /api/users/**, /api/profile/**
+            - Path=/api/auth/**, /api/users/**, /api/profile/**, /api/goals/**
           filters:
             - name: RequestRateLimiter
               args:
@@ -70,32 +70,6 @@ spring:
             - Path=/api-docs/user-service/**
           filters:
             - RewritePath=/api-docs/user-service, /api-docs
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
-                redis-rate-limiter.replenishRate: 50
-                redis-rate-limiter.burstCapacity: 75
-                redis-rate-limiter.requestedTokens: 1
-
-        # ======================= GOAL SERVICE ========================
-        - id: goal-service
-          uri: ${GOAL_SERVICE_URL}
-          predicates:
-            - Path=/api/goals/**
-          filters:
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
-                redis-rate-limiter.replenishRate: 20
-                redis-rate-limiter.burstCapacity: 30
-                redis-rate-limiter.requestedTokens: 1
-
-        - id: goal-service-swagger
-          uri: ${GOAL_SERVICE_URL}
-          predicates:
-            - Path=/api-docs/goal-service/**
-          filters:
-            - RewritePath=/api-docs/goal-service, /api-docs
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
@@ -227,8 +201,6 @@ springdoc:
         url: /api-docs/bff-service
       - name: food-service
         url: /api-docs/food-service
-      - name: goal-service
-        url: /api-docs/goal-service
     persist-authorization: true
 
 management:
