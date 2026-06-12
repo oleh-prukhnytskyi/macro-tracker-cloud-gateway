@@ -133,7 +133,7 @@ spring:
         - id: weight-service
           uri: ${WEIGHT_SERVICE_URL}
           predicates:
-            - Path=/api/weights/**
+            - Path=/api/weights/**, /api/water/**
           filters:
             - name: RequestRateLimiter
               args:
