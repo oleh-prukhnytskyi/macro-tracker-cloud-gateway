@@ -159,7 +159,7 @@ spring:
         - id: bff-service
           uri: ${BFF_SERVICE_URL}
           predicates:
-            - Path=/api/dashboard/**
+            - Path=/api/dashboard/**, /api/export/**
           filters:
             - name: RequestRateLimiter
               args:
