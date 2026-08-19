@@ -55,7 +55,7 @@ spring:
         - id: user-service
           uri: ${USER_SERVICE_URL}
           predicates:
-            - Path=/api/auth/**, /api/users/**, /api/profile/**, /api/goals/**
+            - Path=/api/auth/**, /api/users/**, /api/profile/**, /api/goals/**, /api/subscriptions/**, /internal/google-play/rtdn
           filters:
             - name: RequestRateLimiter
               args:
@@ -159,7 +159,7 @@ spring:
         - id: bff-service
           uri: ${BFF_SERVICE_URL}
           predicates:
-            - Path=/api/dashboard/**, /api/export/**
+            - Path=/api/dashboard/**, /api/export/**, /api/insights/**
           filters:
             - name: RequestRateLimiter
               args:
