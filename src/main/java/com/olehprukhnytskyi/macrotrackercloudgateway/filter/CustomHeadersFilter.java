@@ -26,8 +26,12 @@ public class CustomHeadersFilter implements GlobalFilter, Ordered {
                     List<String> roles = jwt.getClaimAsStringList("roles");
                     String rolesStr = roles != null ? String.join(",", roles) : "";
                     ServerHttpRequest request = exchange.getRequest().mutate()
-                            .header(CustomHeaders.X_USER_ID, userId)
-                            .header(CustomHeaders.X_USER_ROLES, rolesStr)
+                            .headers(headers -> {
+                                headers.remove(CustomHeaders.X_USER_ID);
+                                headers.remove(CustomHeaders.X_USER_ROLES);
+                                headers.set(CustomHeaders.X_USER_ID, userId);
+                                headers.set(CustomHeaders.X_USER_ROLES, rolesStr);
+                            })
                             .build();
                     return exchange.mutate().request(request).build();
                 })
