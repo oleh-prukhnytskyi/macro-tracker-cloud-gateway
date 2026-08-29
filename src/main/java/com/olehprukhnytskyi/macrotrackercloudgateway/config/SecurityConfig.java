@@ -25,6 +25,7 @@ public class SecurityConfig {
                         .pathMatchers(
                                 "/api/auth/**",
                                 "/internal/revenuecat/webhook",
+                                "/internal/insert-affiliate/webhook",
                                 "/api/goals/**",
                                 "/api-docs/**",
                                 "/.well-known/jwks.json",
