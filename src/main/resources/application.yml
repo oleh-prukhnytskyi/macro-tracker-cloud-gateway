@@ -55,7 +55,7 @@ spring:
         - id: user-service
           uri: ${USER_SERVICE_URL}
           predicates:
-            - Path=/api/auth/**, /api/users/**, /api/profile/**, /api/goals/**, /api/subscriptions/**, /internal/revenuecat/webhook, /internal/insert-affiliate/webhook
+            - Path=/api/auth/**, /api/users/**, /api/profile/**, /api/goals/**, /api/subscriptions/**, /internal/revenuecat/webhook
           filters:
             - name: RequestRateLimiter
               args:
