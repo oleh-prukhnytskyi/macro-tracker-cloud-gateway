@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(
                                 "/api/auth/**",
-                                "/internal/google-play/rtdn",
+                                "/internal/revenuecat/webhook",
                                 "/api/goals/**",
                                 "/api-docs/**",
                                 "/.well-known/jwks.json",
