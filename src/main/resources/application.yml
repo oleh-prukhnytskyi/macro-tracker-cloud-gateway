@@ -78,6 +78,21 @@ spring:
                 redis-rate-limiter.requestedTokens: 1
 
         # ======================= FOOD SERVICE ========================
+        - id: food-service-ai-scanners
+          uri: ${FOOD_SERVICE_URL}
+          predicates:
+            - Path=/api/foods/photo-scan, /api/foods/voice-scan
+          filters:
+            - name: RequestSize
+              args:
+                maxSize: 8MB
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.keyResolver: "#{@hybridKeyResolver}"
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 2
+                redis-rate-limiter.requestedTokens: 1
+
         - id: food-service
           uri: ${FOOD_SERVICE_URL}
           predicates:
@@ -207,12 +222,12 @@ management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: health,info
   endpoint:
     health:
       probes:
         enabled: true
-      show-details: always
+      show-details: never
 
 server:
   forward-headers-strategy: native
